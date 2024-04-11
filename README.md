@@ -43,7 +43,7 @@ The following `environment` variables are supported by the Docker image.
 
 ## Building the Image
 ```bash
-docker build --no-cache -t timveil/dynamic-haproxy:latest .
+docker build --no-cache --platform linux/arm64 -t timveil/dynamic-haproxy:latest .
 ```
 
 ## Publishing the Image
