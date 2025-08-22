@@ -1,5 +1,5 @@
 # Use specific version tag for better reproducibility and security
-FROM haproxy:2.6-alpine
+FROM haproxy:2.9-alpine
 
 # Add metadata labels following OCI Image Format Specification
 LABEL maintainer="tjveil@gmail.com" \
