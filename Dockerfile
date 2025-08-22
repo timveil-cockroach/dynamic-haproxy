@@ -8,12 +8,18 @@ LABEL maintainer="tjveil@gmail.com" \
       org.opencontainers.image.vendor="Tim Veil" \
       org.opencontainers.image.source="https://github.com/timveil/dynamic-haproxy"
 
+# Switch to root user to install packages
+USER root
+
 # Install bash (needed for the entrypoint script) in a single layer
 # Use --no-cache to avoid storing package index locally
 RUN apk add --no-cache bash
 
 # Copy entrypoint script with proper permissions
 COPY --chmod=755 docker-entrypoint.sh /docker-entrypoint.sh
+
+# Switch back to haproxy user for runtime security
+USER haproxy
 
 # Document exposed ports
 EXPOSE 26257 8080 8081
