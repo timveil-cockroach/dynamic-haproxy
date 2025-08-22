@@ -21,29 +21,41 @@ jobs:
         run: |
           docker build -t dynamic-haproxy:test .
           
-          # Start the container
-          docker run --rm -d --name test-container \
+          # Start the container without --rm so we can debug if it fails
+          docker run -d --name test-container \
             -e NODES="node1 node2 node3" \
             -p 26257:26257 \
             -p 8080:8080 \
             -p 8081:8081 \
             dynamic-haproxy:test
           
-          # Check if container is running
-          docker ps | grep test-container || (echo "Container failed to start" && docker logs test-container 2>&1 && exit 1)
+          # Give container time to start or fail
+          sleep 5
           
-          # Wait for HAProxy to start
-          sleep 10
+          # Check container status
+          echo "Container status:"
+          docker ps -a | grep test-container
           
-          # Show container logs for debugging
+          # Show container logs regardless of status
           echo "Container logs:"
-          docker logs test-container
+          docker logs test-container 2>&1 || true
+          
+          # Check if container is still running
+          if ! docker ps | grep -q test-container; then
+            echo "Container exited. Exit code:"
+            docker inspect test-container --format='{{.State.ExitCode}}'
+            exit 1
+          fi
+          
+          # Wait a bit more for HAProxy to fully start
+          sleep 5
           
           # Test the stats endpoint
-          curl -f http://localhost:8081/ || (echo "Failed to connect to stats page" && docker logs test-container && exit 1)
+          curl -f http://localhost:8081/ || (echo "Failed to connect to stats page" && exit 1)
           
-          # Stop the container
+          # Clean up
           docker stop test-container || true
+          docker rm test-container || true
 
       - name: Run Trivy Security Scan
         uses: aquasecurity/trivy-action@master
