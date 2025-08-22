@@ -18,6 +18,10 @@ RUN apk add --no-cache bash
 # Copy entrypoint script with proper permissions
 COPY --chmod=755 docker-entrypoint.sh /docker-entrypoint.sh
 
+# Create config directory and set permissions for haproxy user
+RUN mkdir -p /usr/local/etc/haproxy && \
+    chown -R haproxy:haproxy /usr/local/etc/haproxy
+
 # Switch back to haproxy user for runtime security
 USER haproxy
 

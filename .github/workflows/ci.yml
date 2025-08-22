@@ -20,15 +20,30 @@ jobs:
       - name: Build and Test Docker Image
         run: |
           docker build -t dynamic-haproxy:test .
+          
+          # Start the container
           docker run --rm -d --name test-container \
             -e NODES="node1 node2 node3" \
             -p 26257:26257 \
             -p 8080:8080 \
             -p 8081:8081 \
             dynamic-haproxy:test
+          
+          # Check if container is running
+          docker ps | grep test-container || (echo "Container failed to start" && docker logs test-container 2>&1 && exit 1)
+          
+          # Wait for HAProxy to start
           sleep 10
-          curl -f http://localhost:8081/ || (docker logs test-container && exit 1)
-          docker stop test-container
+          
+          # Show container logs for debugging
+          echo "Container logs:"
+          docker logs test-container
+          
+          # Test the stats endpoint
+          curl -f http://localhost:8081/ || (echo "Failed to connect to stats page" && docker logs test-container && exit 1)
+          
+          # Stop the container
+          docker stop test-container || true
 
       - name: Run Trivy Security Scan
         uses: aquasecurity/trivy-action@master
