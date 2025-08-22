@@ -55,6 +55,9 @@ function buildConfig() {
     _http_server_block+="server $node $node:${_http_listen_port} check port ${_health_check_port}"$'\n'
   done
 
+  # Ensure the config directory exists and is writable
+  mkdir -p /usr/local/etc/haproxy
+  
   cat > /usr/local/etc/haproxy/haproxy.cfg <<EOF
 global
     log stdout format raw local0 info
