@@ -1,4 +1,9 @@
 # CockroachDB Dynamic HAProxy
+
+[![CI Build and Test](https://github.com/timveil-cockroach/dynamic-haproxy/actions/workflows/ci.yml/badge.svg)](https://github.com/timveil-cockroach/dynamic-haproxy/actions/workflows/ci.yml)
+[![Release Docker Image](https://github.com/timveil-cockroach/dynamic-haproxy/actions/workflows/release.yml/badge.svg)](https://github.com/timveil-cockroach/dynamic-haproxy/actions/workflows/release.yml)
+[![Docker Hub](https://img.shields.io/docker/pulls/timveil/dynamic-haproxy)](https://hub.docker.com/repository/docker/timveil/dynamic-haproxy)
+
 A Docker image that simplifies the deployment of HAProxy in front of a CockroachDB Docker cluster.  This image is intended to be used for local development, testing and demos.  The following `docker-compose.yml` snippet highlights how it may be used, specifically the `lb` service. 
 
 ```yaml
